@@ -1,0 +1,65 @@
+
+CREATE TABLE Accounts
+	 (Id SERIAL PRIMARY KEY,
+	Amount INTEGER
+	 );
+	 
+INSERT INTO Accounts(Amount)
+VALUES ( 200 ),( 300 ),( 400 ),( 500 ),( 600 );
+		
+	 
+CREATE TABLE Managers
+	(Id SERIAL PRIMARY KEY,
+	 FirstName CHARACTER VARYING(30),
+	 LastName CHARACTER VARYING(30),
+	 Patronymic CHARACTER VARYING(30),
+	 Email CHARACTER VARYING(30),
+	 ManagerPosition CHARACTER VARYING(30),
+	 PhoneNumber CHARACTER VARYING(30)
+	);
+	
+INSERT INTO Managers (firstName, lastName, patronymic, email, managerPosition, phoneNumber)
+VALUES ('Peter', 'Ivanov', 'Ivanovich','ivan@mail.ru','SalesManager', '5982'),
+	('Aleksand', 'Pushkin', 'Ivanovich','ivan@mail.ru','SalesManager', '5282'),
+	('Peter', 'Ivanov', 'Ivanovich','ivan@mail.ru','SalesManager', '5942'),
+	('Dmitrii', 'Agafonov', 'Alekseevich','petrov@mail.ru','SalesManager', '5922'),
+	('Peter', 'Smirnov', 'Ivanovich','ivan@mail.ru','SalesManager', '5422');
+	
+CREATE TABLE Deposits
+	(Id SERIAL PRIMARY KEY,
+	 ManagerId INTEGER REFERENCES Managers (Id),
+	 OpennigDate TIMESTAMP 
+	);
+
+INSERT INTO Deposits ( managerId, Opennigdate)
+VALUES((SELECT managers.Id FROM managers WHERE ID=1),CURRENT_TIMESTAMP),
+		((SELECT managers.Id FROM managers WHERE ID=2),CURRENT_TIMESTAMP),
+		((SELECT managers.Id FROM managers WHERE ID=3),CURRENT_TIMESTAMP),
+		((SELECT managers.Id FROM managers WHERE ID=4),CURRENT_TIMESTAMP),
+		((SELECT managers.Id FROM managers WHERE ID=5),CURRENT_TIMESTAMP);
+
+
+CREATE TABLE Clients
+	(Id SERIAL PRIMARY KEY,
+	 FirstName CHARACTER VARYING(30),
+	 LastName CHARACTER VARYING(30),
+	 Patronymic CHARACTER VARYING(30),
+	 Email CHARACTER VARYING(30),
+	 PassportNumber CHARACTER VARYING(30),
+	 PhoneNumber CHARACTER VARYING(30),
+	AccountId INTEGER REFERENCES Accounts (Id),
+	 DepositId INTEGER REFERENCES Deposits (Id)
+	 );
+
+INSERT INTO Clients (FirstName, LastName, Patronymic,Email, PassportNumber, PhoneNumber, AccountId, DepositId )
+VALUES ('Ivan', 'Ivanov','Ivanovch','ivan@mail.ru', 'SalesManager', '5623',
+			(Select Accounts.Id From Accounts Where Id=1), (Select Deposits.Id from Deposits Where Id=1)),
+	('Aleksandr', 'Pushkin','Ivanovch',' pushkin@mail.ru', 'SalesManager', '5886',
+			(Select Accounts.Id From Accounts Where Id=2), (Select Deposits.Id from Deposits Where Id=2)),
+	('Mikhail', 'Ivanov','Ivanovch','ivan@mail.ru', 'SalesManager', '5689',
+			(Select Accounts.Id From Accounts Where Id=3), (Select Deposits.Id from Deposits Where Id=3)),
+	('Peter ', 'Ivanov','Petrovich','petrov@mail.ru', 'SalesManager', '5923',
+			(Select Accounts.Id From Accounts Where Id=4), (Select Deposits.Id from Deposits Where Id=4)),
+	('Dmitrii ', 'Ivanov','Alekseevich ','ivan@mail.ru', 'SalesManager', '2523',
+			(Select Accounts.Id From Accounts Where Id=5), (Select Deposits.Id from Deposits Where Id=5));
+
